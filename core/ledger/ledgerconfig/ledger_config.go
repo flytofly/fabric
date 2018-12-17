@@ -21,6 +21,14 @@ func IsCouchDBEnabled() bool {
 	}
 	return false
 }
+// IsMongoDBEnabled exposes the useMongoDB variable
+func IsMongoDBEnabled() bool {
+	stateDatabase := viper.GetString("ledger.state.stateDatabase")
+	if stateDatabase == "MongoDB" {
+		return true
+	}
+	return false
+}
 
 const confPeerFileSystemPath = "peer.fileSystemPath"
 const confLedgersData = "ledgersData"

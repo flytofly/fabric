@@ -623,7 +623,7 @@ ledger:
   blockchain:
 
   state:
-    # stateDatabase - options are "goleveldb", "CouchDB"
+    # stateDatabase - options are "goleveldb", "CouchDB", "MongoDB"
     # goleveldb - default state database stored in goleveldb.
     # CouchDB - store state database in CouchDB
     stateDatabase: goleveldb
@@ -658,6 +658,24 @@ ledger:
        # Increasing the value may improve write efficiency of peer and CouchDB,
        # but may degrade query response time.
        warmIndexesAfterNBlocks: 1
+
+    MongoDBConfig:
+        # The variable can be covered on environment
+        # Default connection Url of MongoDB
+        url: mongodb://127.0.0.1:27017
+        # This username must have read and write authority on MongoDB
+        username:
+        # The password is recommended to pass as an environment variable
+        # during start up (eg CORE_LEDGER_STATE_MONGODBCONFIG_PASSWORD).
+        # If it is stored here, the file must be access control protected
+        # to prevent unintended users from discovering the password.
+        password:
+        # The default collectionName for MongoDB.
+        collectionName: test
+        # MongoDB request timeout.
+        requestTime: 35s
+        # Limit on the number of records to return per query
+        queryLimit: 10000
 
   history:
     # enableHistoryDatabase - options are true or false

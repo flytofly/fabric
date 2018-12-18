@@ -21,17 +21,18 @@ type fileValidator func(fileName string, fileBytes []byte) error
 // AllowedCharsCollectionName captures the regex pattern for a valid collection name
 const AllowedCharsCollectionName = "[A-Za-z0-9_-]+"
 
-// Currently, the only metadata expected and allowed is for META-INF/statedb/couchdb/indexes.
+// Currently, the only metadata expected and allowed is for META-INF/statedb/couchdb/indexes. (Support mongodb in this branch)
 var fileValidators = map[*regexp.Regexp]fileValidator{
 	regexp.MustCompile("^META-INF/statedb/couchdb/indexes/.*[.]json"):                                                couchdbIndexFileValidator,
 	regexp.MustCompile("^META-INF/statedb/couchdb/collections/" + AllowedCharsCollectionName + "/indexes/.*[.]json"): couchdbIndexFileValidator,
+	regexp.MustCompile("^META-INF/statedb/mongodb/indexes/.*[.]json"):                                                mongodbIndexFileValidator,
 }
 
 var collectionNameValid = regexp.MustCompile("^" + AllowedCharsCollectionName)
 
 var fileNameValid = regexp.MustCompile("^.*[.]json")
 
-var validDatabases = []string{"couchdb"}
+var validDatabases = []string{"couchdb", "mongodb"}
 
 // UnhandledDirectoryError is returned for metadata files in unhandled directories
 type UnhandledDirectoryError struct {
@@ -147,6 +148,24 @@ func couchdbIndexFileValidator(fileName string, fileBytes []byte) error {
 	if err != nil {
 		return &InvalidIndexContentError{fmt.Sprintf("Index metadata file [%s] is not a valid index definition: %s", fileName, err)}
 	}
+
+	return nil
+
+}
+
+// mongodbIndexFileValidator implements fileValidator
+func mongodbIndexFileValidator(fileName string, fileBytes []byte) error {
+	// if the content does not validate as JSON, return err to invalidate the file
+	boolIsJSON, _ := isJSON(fileBytes)
+	if !boolIsJSON {
+		return &InvalidIndexContentError{fmt.Sprintf("Index metadata file [%s] is not a valid JSON", fileName)}
+	}
+
+	// TODO validate the index definition
+	//err := validateIndexJSON(indexDefinition)
+	//if err != nil {
+	//	return &InvalidIndexContentError{fmt.Sprintf("Index metadata file [%s] is not a valid index definition: %s", fileName, err)}
+	//}
 
 	return nil
 

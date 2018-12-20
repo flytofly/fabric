@@ -107,6 +107,7 @@ func chaincodeUpgrade(cmd *cobra.Command, args []string, cf *ChaincodeCmdFactory
 	if channelID == "" {
 		return errors.New("The required parameter 'channelID' is empty. Rerun the command with -C flag")
 	}
+	logger.Debugf("chaincode upgrade.")
 	// Parsing of the command line is done so silence cmd usage
 	cmd.SilenceUsage = true
 
